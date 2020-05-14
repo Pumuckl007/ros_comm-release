@@ -63,6 +63,7 @@
 #include <signal.h>
 
 #include <cstdlib>
+#include <iostream>
 
 namespace ros
 {
@@ -292,6 +293,7 @@ bool isStarted()
 
 void start()
 {
+  std::cerr << "Starting ROS, init.cpp::start " << __LINE__ << "\n";
   boost::mutex::scoped_lock lock(g_start_mutex);
   if (g_started)
   {
@@ -410,9 +412,9 @@ void start()
   g_internal_queue_thread = boost::thread(internalCallbackQueueThreadFunc);
   getGlobalCallbackQueue()->enable();
 
-  ROSCPP_LOG_DEBUG("Started node [%s], pid [%d], bound on [%s], xmlrpc port [%d], tcpros port [%d], using [%s] time", 
-		   this_node::getName().c_str(), getpid(), network::getHost().c_str(), 
-		   XMLRPCManager::instance()->getServerPort(), ConnectionManager::instance()->getTCPPort(), 
+  ROSCPP_LOG_DEBUG("Started node [%s], pid [%d], bound on [%s], xmlrpc port [%d], tcpros port [%d], using [%s] time",
+		   this_node::getName().c_str(), getpid(), network::getHost().c_str(),
+		   XMLRPCManager::instance()->getServerPort(), ConnectionManager::instance()->getTCPPort(),
 		   Time::useSystemTime() ? "real" : "sim");
 
   // Label used to abort if we've started shutting down in the middle of start(), which can happen in
@@ -447,6 +449,7 @@ void check_ipv6_environment() {
 
 void init(const M_string& remappings, const std::string& name, uint32_t options)
 {
+  std::cerr << "Starting ROS, init.cpp::init " << __LINE__ << "\n";
   if (!g_atexit_registered)
   {
     g_atexit_registered = true;
@@ -486,7 +489,7 @@ void init(const M_string& remappings, const std::string& name, uint32_t options)
 void init(int& argc, char** argv, const std::string& name, uint32_t options)
 {
   M_string remappings;
-
+  std::cerr << "Starting ROS, init.cpp::init " << __LINE__ << "\n";
   int full_argc = argc;
   // now, move the remapping argv's to the end, and decrement argc as needed
   for (int i = 0; i < argc; )
@@ -519,6 +522,7 @@ void init(int& argc, char** argv, const std::string& name, uint32_t options)
 
 void init(const VP_string& remappings, const std::string& name, uint32_t options)
 {
+  std::cerr << "Starting ROS, init.cpp::init " << __LINE__ << "\n";
   M_string remappings_map;
   VP_string::const_iterator it = remappings.begin();
   VP_string::const_iterator end = remappings.end();

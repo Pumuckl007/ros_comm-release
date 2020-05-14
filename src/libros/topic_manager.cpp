@@ -45,6 +45,8 @@
 
 #include <ros/console.h>
 
+#include <iostream>
+
 using namespace XmlRpc; // A battle to be fought later
 using namespace std; // sigh
 
@@ -292,6 +294,7 @@ bool TopicManager::subscribe(const SubscribeOptions& ops)
 
 bool TopicManager::advertise(const AdvertiseOptions& ops, const SubscriberCallbacksPtr& callbacks)
 {
+  ROS_WARN("TopicManager::advertise %d", __LINE__);
   if (ops.datatype == "*")
   {
     std::stringstream ss;
@@ -704,7 +707,7 @@ bool TopicManager::requestTopic(const string &topic,
 void TopicManager::publish(const std::string& topic, const boost::function<SerializedMessage(void)>& serfunc, SerializedMessage& m)
 {
   boost::recursive_mutex::scoped_lock lock(advertised_topics_mutex_);
-
+  // ROS_WARN("TopicManager::publish %d", __LINE__);
   if (isShuttingDown())
   {
     return;
@@ -798,7 +801,7 @@ PublicationPtr TopicManager::lookupPublicationWithoutLock(const string &topic)
 bool TopicManager::unsubscribe(const std::string &topic, const SubscriptionCallbackHelperPtr& helper)
 {
   SubscriptionPtr sub;
-
+  // ROS_WARN("TopicManager::unsubscribe %d", __LINE__);
   {
     boost::mutex::scoped_lock lock(subs_mutex_);
 
@@ -882,6 +885,7 @@ size_t TopicManager::getNumSubscriptions()
 
 size_t TopicManager::getNumPublishers(const std::string &topic)
 {
+  // ROS_WARN("Get num publishers");
   boost::mutex::scoped_lock lock(subs_mutex_);
 
   if (isShuttingDown())
@@ -961,6 +965,7 @@ void TopicManager::getBusInfo(XmlRpcValue &info)
 
 void TopicManager::getSubscriptions(XmlRpcValue &subs)
 {
+  // ROS_WARN("TopicManager::getSubscriptions");
   // force these guys to be arrays, even if we don't populate them
   subs.setSize(0);
 
@@ -1048,6 +1053,7 @@ void TopicManager::getBusInfoCallback(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRp
 
 void TopicManager::getSubscriptionsCallback(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 {
+  ROS_WARN("TopicManager::getSubscriptionsCallback");
   (void)params;
   result[0] = 1;
   result[1] = std::string("subscriptions");
@@ -1058,6 +1064,7 @@ void TopicManager::getSubscriptionsCallback(XmlRpc::XmlRpcValue& params, XmlRpc:
 
 void TopicManager::getPublicationsCallback(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 {
+  ROS_WARN("TopicManager::getPublicationsCallback");
   (void)params;
   result[0] = 1;
   result[1] = std::string("publications");

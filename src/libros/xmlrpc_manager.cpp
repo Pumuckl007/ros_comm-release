@@ -138,6 +138,7 @@ void XMLRPCManager::shutdown()
   {
     return;
   }
+  ROS_WARN("XMLRPCManager::shutdown(");
 
   shutting_down_ = true;
   server_thread_.join();
@@ -389,11 +390,13 @@ void XMLRPCManager::releaseXMLRPCClient(XmlRpcClient *c)
 void XMLRPCManager::addASyncConnection(const ASyncXMLRPCConnectionPtr& conn)
 {
   boost::mutex::scoped_lock lock(added_connections_mutex_);
+  ROS_WARN("Added async connection");
   added_connections_.insert(conn);
 }
 
 void XMLRPCManager::removeASyncConnection(const ASyncXMLRPCConnectionPtr& conn)
 {
+  ROS_WARN("Removing async connection!");
   boost::mutex::scoped_lock lock(removed_connections_mutex_);
   removed_connections_.insert(conn);
 }
