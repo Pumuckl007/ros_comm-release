@@ -289,7 +289,6 @@ std::string NodeHandle::resolveName(const std::string& name, bool remap, no_vali
 Publisher NodeHandle::advertise(AdvertiseOptions& ops)
 {
   ROS_WARN("advertising");
-  int aLongNonConflictingName = 0/0;
   ops.topic = resolveName(ops.topic);
   if (ops.callback_queue == 0)
   {

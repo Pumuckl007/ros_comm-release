@@ -178,8 +178,11 @@ bool execute(const std::string& method, const XmlRpc::XmlRpcValue& request, XmlR
 
   std::string master_host = getHost();
   uint32_t master_port = getPort();
-  ROS_WARN("Creating XMLRPC client");
+  ROS_WARN("Creating XMLRPC client at %d", __LINE__);
   XmlRpc::XmlRpcClient *c = XMLRPCManager::instance()->getXMLRPCClient(master_host, master_port, "/");
+  if(c->isFault()){
+    ROS_WARN("Fault in XMLRPC!");
+  }
   bool printed = false;
   bool slept = false;
   bool ok = true;

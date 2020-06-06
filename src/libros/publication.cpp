@@ -248,6 +248,7 @@ void Publication::removeSubscriberLink(const SubscriberLinkPtr& sub_link)
 
   if (link)
   {
+    ROS_WARN("Removed subscriber link (%d) on line %d!", link->getConnectionID(), __LINE__);
     peerDisconnect(link);
   }
 }
@@ -324,6 +325,7 @@ void Publication::dropAllConnections()
 
 void Publication::peerConnect(const SubscriberLinkPtr& sub_link)
 {
+  ROS_WARN("Peer connected at line %d!", __LINE__);
   boost::mutex::scoped_lock lock(callbacks_mutex_);
 
   V_Callback::iterator it = callbacks_.begin();
@@ -341,6 +343,7 @@ void Publication::peerConnect(const SubscriberLinkPtr& sub_link)
 
 void Publication::peerDisconnect(const SubscriberLinkPtr& sub_link)
 {
+  ROS_WARN("Peer disconnected at line %d!", __LINE__);
   boost::mutex::scoped_lock lock(callbacks_mutex_);
 
   V_Callback::iterator it = callbacks_.begin();

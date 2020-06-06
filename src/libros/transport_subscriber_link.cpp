@@ -123,6 +123,8 @@ void TransportSubscriberLink::onConnectionDropped(const ConnectionPtr& conn)
 {
   (void)conn;
   ROS_ASSERT(conn == connection_);
+  int dropped = conn->isDropped() ? 1 : 0;
+  ROS_WARN("Connection dropped (dropped = %d) at line %d!", dropped, __LINE__);
 
   PublicationPtr parent = parent_.lock();
 

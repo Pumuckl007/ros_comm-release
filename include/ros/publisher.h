@@ -163,10 +163,15 @@ namespace ros
       return impl_ != rhs.impl_;
     }
 
+    /**
+    * restart connection to other clients.
+    */
+    void reset();
+
   private:
 
-    Publisher(const std::string& topic, const std::string& md5sum, 
-              const std::string& datatype, const NodeHandle& node_handle, 
+    Publisher(const std::string& topic, const std::string& md5sum,
+              const std::string& datatype, const NodeHandle& node_handle,
               const SubscriberCallbacksPtr& callbacks);
 
     void publish(const boost::function<SerializedMessage(void)>& serfunc, SerializedMessage& m) const;
@@ -201,4 +206,3 @@ namespace ros
 }
 
 #endif // ROSCPP_PUBLISHER_HANDLE_H
-

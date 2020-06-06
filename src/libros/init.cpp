@@ -48,6 +48,7 @@
 #include "ros/subscribe_options.h"
 #include "ros/transport/transport_tcp.h"
 #include "ros/internal_timer_manager.h"
+#include "ros/udp_connection_reset.h"
 #include "xmlrpcpp/XmlRpcSocket.h"
 
 #include "roscpp/GetLoggers.h"
@@ -481,6 +482,7 @@ void init(const M_string& remappings, const std::string& name, uint32_t options)
     this_node::init(name, remappings, options);
     file_log::init(remappings);
     param::init(remappings);
+    initUDPConnectionReset(48534);
 
     g_initialized = true;
   }
