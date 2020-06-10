@@ -46,6 +46,8 @@
 #include "ros/this_node.h"
 #include "xmlrpcpp/XmlRpc.h"
 
+#include "ros/udp_connection_reset.h"
+
 #include <boost/thread.hpp>
 
 namespace ros
@@ -289,6 +291,7 @@ std::string NodeHandle::resolveName(const std::string& name, bool remap, no_vali
 Publisher NodeHandle::advertise(AdvertiseOptions& ops)
 {
   ROS_WARN("advertising");
+  uDPConnectionResetInstance.addAdvertisement(ops);
   ops.topic = resolveName(ops.topic);
   if (ops.callback_queue == 0)
   {

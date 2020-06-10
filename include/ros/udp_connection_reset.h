@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ros/advertise_options.h"
 #include <set>
 #include <functional>
 #include <boost/thread/mutex.hpp>
@@ -12,6 +13,7 @@ namespace ros
 
 //forward declaration
 class Publisher;
+class AdvertiseOptions;
 
 void initUDPConnectionReset(short port);
 
@@ -23,12 +25,13 @@ UDPConnectionReset(short port);
 
 void addPublisher(Publisher &publisher);
 void removePublisher(Publisher &publisher);
+void addAdvertisement(AdvertiseOptions& ops);
 
 private:
   bool valid;
   int socketId;
   void serverThreadFunc();
-  std::set<Publisher*> reset_set;
+  std::set<AdvertiseOptions> reset_set;
   boost::mutex reset_set_mutex;
 };
 

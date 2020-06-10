@@ -1,5 +1,6 @@
 #include "ros/udp_connection_reset.h"
 #include "ros/publisher.h"
+#include "ros/node_handle.h"
 #include <boost/function.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
@@ -56,7 +57,7 @@ void UDPConnectionReset::serverThreadFunc()
     char message[1024];
     while ((bytes_read = read(uDPConnectionResetInstance.socketId, message, 1023)) > 0) {
       message[bytes_read] = '\0';
-      std::set<Publisher*> set_copy;
+      std::set<AdvertiseOptions> set_copy;
       ROS_WARN("Resetting, got message: %s\n", message);
       {
         boost::mutex::scoped_lock lock(this->reset_set_mutex);
@@ -64,13 +65,16 @@ void UDPConnectionReset::serverThreadFunc()
         this->reset_set.clear();
       }
       ROS_WARN("Resetting %d publishers.", (int)set_copy.size());
-      for(Publisher *publisher : set_copy){
+      NodeHandle nh;
+      for(const AdvertiseOptions &ops : set_copy){
         ROS_WARN("Trying Reset udp_connection_reset.cpp:%d", __LINE__);
-        try{
-          publisher->reset();
-        } catch(const std::bad_alloc& bad){
-          ROS_WARN("Got a bad error %s\n", bad.what());
-        }
+        AdvertiseOptions ops_copy = ops;
+        ops_copy.force_update = true;
+        // try{
+          nh.advertise(ops_copy);
+        // } catch(const std::bad_alloc& bad){
+        //   ROS_WARN("Got a bad error %s\n", bad.what());
+        // }
       }
     }
   }
@@ -81,13 +85,18 @@ UDPConnectionReset::~UDPConnectionReset(){
 }
 
 void UDPConnectionReset::addPublisher(Publisher &publisher){
-  boost::mutex::scoped_lock lock(this->reset_set_mutex);
-  this->reset_set.insert(&publisher);
+  // boost::mutex::scoped_lock lock(this->reset_set_mutex);
+  // this->reset_set.insert(&publisher);
 }
 
 void UDPConnectionReset::removePublisher(Publisher &publisher){
+  // boost::mutex::scoped_lock lock(this->reset_set_mutex);
+  // this->reset_set.erase(&publisher);
+}
+
+void UDPConnectionReset::addAdvertisement(AdvertiseOptions& ops){
   boost::mutex::scoped_lock lock(this->reset_set_mutex);
-  this->reset_set.erase(&publisher);
+  this->reset_set.insert(ops);
 }
 
 void initUDPConnectionReset(short port){

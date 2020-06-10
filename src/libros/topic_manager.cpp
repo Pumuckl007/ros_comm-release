@@ -340,8 +340,10 @@ bool TopicManager::advertise(const AdvertiseOptions& ops, const SubscriberCallba
       pub.reset();
     }
 
-    if (pub)
+    if (pub && !ops.force_update)
     {
+      ROS_WARN("Trying to advertise on topic [%s] with md5sum [%s] and datatype [%s], but the topic is already advertised as md5sum [%s] and datatype [%s]",
+                ops.topic.c_str(), ops.md5sum.c_str(), ops.datatype.c_str(), pub->getMD5Sum().c_str(), pub->getDataType().c_str());
       if (pub->getMD5Sum() != ops.md5sum)
       {
         ROS_ERROR("Tried to advertise on topic [%s] with md5sum [%s] and datatype [%s], but the topic is already advertised as md5sum [%s] and datatype [%s]",
@@ -352,11 +354,17 @@ bool TopicManager::advertise(const AdvertiseOptions& ops, const SubscriberCallba
       pub->addCallbacks(callbacks);
 
       return true;
+    } else {
+      ROS_WARN("NO publisher! topic_manager.cpp:%d", __LINE__);
     }
-
-    pub = PublicationPtr(boost::make_shared<Publication>(ops.topic, ops.datatype, ops.md5sum, ops.message_definition, ops.queue_size, ops.latch, ops.has_header));
+    bool dont_skip_pub_creation = !pub;
+    if(dont_skip_pub_creation){
+      pub = PublicationPtr(boost::make_shared<Publication>(ops.topic, ops.datatype, ops.md5sum, ops.message_definition, ops.queue_size, ops.latch, ops.has_header));
+    }
     pub->addCallbacks(callbacks);
-    advertised_topics_.push_back(pub);
+    if(dont_skip_pub_creation){
+      advertised_topics_.push_back(pub);
+    }
   }
 
 
@@ -758,6 +766,7 @@ void TopicManager::publish(const std::string& topic, const boost::function<Seria
   }
   else
   {
+    ROS_WARN("Publishing on publisher with no subs, topic_manager.cpp:%d", __LINE__);
     p->incrementSequence();
   }
 }

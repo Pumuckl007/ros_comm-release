@@ -43,6 +43,7 @@ struct ROSCPP_DECL AdvertiseOptions
   AdvertiseOptions()
   : callback_queue(0)
   , latch(false)
+  , force_update(false)
   {
   }
 
@@ -69,6 +70,7 @@ struct ROSCPP_DECL AdvertiseOptions
   , callback_queue(0)
   , latch(false)
   , has_header(false)
+  , force_update(false)
   {}
 
   /**
@@ -131,6 +133,11 @@ struct ROSCPP_DECL AdvertiseOptions
   bool has_header;
 
 
+  /** if we should force the update and push out a new publication, used for fast recovery
+  */
+  bool force_update;
+
+
   /**
    * \brief Templated helper function for creating an AdvertiseOptions for a message type with most options.
    *
@@ -156,6 +163,11 @@ struct ROSCPP_DECL AdvertiseOptions
     ops.tracked_object = tracked_object;
     ops.callback_queue = queue;
     return ops;
+  }
+
+
+  bool operator <(const AdvertiseOptions& other) const{
+    return this->md5sum < other.md5sum;
   }
 };
 
